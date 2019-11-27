@@ -19,7 +19,7 @@ with open('./instance/knn.pickle', mode = 'rb') as fp:
 
 
 @bp.route('/recommendations', methods=['GET'])
-def index():
+def recommendation():
     name :string = request.args.get('name')
     ret = []
 
@@ -40,6 +40,21 @@ def index():
                    "genre":anime_m.iloc[indice.flatten()[i]]['genre'],
                    "type":anime_m.iloc[indice.flatten()[i]]['type'],
                    "episodes":anime_m.iloc[indice.flatten()[i]]['episodes'],
+               },
+
+    return jsonify(ret), 200
+
+
+@bp.route('/search', methods=['GET'])
+def search():
+    name :string = request.args.get('name')
+    ret = []
+
+    animes = anime_m[anime_m['name'].str.contains(name)]
+
+    for i in range(0, min(10, len(animes))):
+        ret += {
+                   "name":animes.iloc[i]['name'],
                },
 
     return jsonify(ret), 200
